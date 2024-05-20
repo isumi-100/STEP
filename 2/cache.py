@@ -21,7 +21,7 @@ class Cache:
         for i in key:
             hash += ord(i)
             idx += 1
-        return hash
+        return hash % 97
 
     def _remove(self, node):
         prev_node = node.prev
@@ -29,7 +29,7 @@ class Cache:
         prev_node.next = next_node
         next_node.prev = prev_node
 
-    def _add_to_front(self, node):
+    def _add_to_head(self, node):
         first_node = self.head.next
         self.head.next = node
         node.prev = self.head
@@ -37,9 +37,8 @@ class Cache:
         first_node.prev = node
 
     def access_page(self, url, contents):
-        index = self.calculate_hash(url) % self.n
+        index = self.calculate_hash(url) 
         node = self.nodes[index]
-        
 
         # Check if the URL is already in cache
         while node:
@@ -58,7 +57,7 @@ class Cache:
         if self.nodes[index]:
             self.nodes[index].prev = new_node
         self.nodes[index] = new_node
-        self._add_to_front(new_node)
+        self._add_to_head(new_node)
         self.count += 1
 
         # If the cache is full, remove the least recently accessed item
@@ -68,11 +67,11 @@ class Cache:
             self.count -= 1
 
             # Remove from nodes
-            index = self.calculate_hash(lru.key) % self.n
+            index = self.calculate_hash(lru.key) 
             node = self.nodes[index]
             prev_node = None
             while node:
-                if node.key == self.tail.prev.key:
+                if node.key == lru.prev.key:
                     if prev_node:
                         prev_node.next = node.next
                     else:
@@ -89,7 +88,6 @@ class Cache:
         while current != self.tail:
             result.append(current.key)
             current = current.next
-        print(result)
         return result
 
 def cache_test():
