@@ -8,12 +8,13 @@ class ListNode:
 class Cache:
     def __init__(self, n):
         self.n = n
+        self.bucket_size = 97
         self.count = 0
         self.head = ListNode()  # Dummy head
         self.tail = ListNode()  # Dummy tail
         self.head.next = self.tail
         self.tail.prev = self.head
-        self.nodes = [None] * 97  # Initial bucket size as 97
+        self.nodes = [None] * self.bucket_size  # Initial bucket size as 97
 
     def calculate_hash(self, key):
         hash = 0
@@ -21,7 +22,7 @@ class Cache:
         for i in key:
             hash += ord(i)
             idx += 1
-        return hash % 97
+        return hash % self.bucket_size
 
     def _remove(self, node):
         prev_node = node.prev

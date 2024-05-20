@@ -19,7 +19,7 @@ def calculate_hash(key):
     hash = 0
     idx = 1
     for i in key:
-        hash += ord(i) * idx * 97
+        hash += ord(i) << idx
         idx += 1
     return hash
 
