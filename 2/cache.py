@@ -19,7 +19,7 @@ class Cache:
         hash = 0
         idx = 1
         for i in key:
-            hash += ord(i) * idx * 97
+            hash += ord(i)
             idx += 1
         return hash
 
@@ -39,8 +39,7 @@ class Cache:
     def access_page(self, url, contents):
         index = self.calculate_hash(url) % self.n
         node = self.nodes[index]
-        if node is not None:
-            print(node.key)
+        
 
         # Check if the URL is already in cache
         while node:
@@ -49,6 +48,8 @@ class Cache:
                 self._add_to_front(node)
                 node.value = contents  # Update the content if needed
                 return
+            # print(node.key)
+
             node = node.next
 
         # If not in cache, add it
@@ -67,11 +68,11 @@ class Cache:
             self.count -= 1
 
             # Remove from nodes
-            index = self.calculate_hash(lru.key)
+            index = self.calculate_hash(lru.key) % self.n
             node = self.nodes[index]
             prev_node = None
             while node:
-                if node.key == lru.key:
+                if node.key == self.tail.prev.key:
                     if prev_node:
                         prev_node.next = node.next
                     else:
