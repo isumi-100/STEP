@@ -105,8 +105,8 @@ class HashTable:
         self.check_size()
         bucket_index = calculate_hash(key) % self.bucket_size
         item = self.buckets[bucket_index]
-        prev_item = None ## reset list-index
-        while item:
+        prev_item = None ## reset list-index(if prev exist or not)
+        while item: # while bucket has item
             if item.key == key:
                 if prev_item:
                     prev_item.next = item.next ## pointer update (prev - item - next --> prev - next)
