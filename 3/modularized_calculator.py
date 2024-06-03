@@ -85,30 +85,37 @@ def tokenize(line):
 def calculate_mul_and_div(tokens):
     index = 0
     add_sub_div_tokens = []
-    add_sub_tokens = []
     # 割り算と掛け算のループを分けないと、3*6/2などが正しくできない
     while index < len(tokens): # 掛け算のみを行うループ
         if tokens[index]['type'] == 'MUL':
-            mul_answer = tokens[index - 1]['number'] * tokens[index + 1]['number']
-            add_sub_div_tokens.pop(-1) #tokens[index-1]がelseの方を通りすでに格納されてしまっているので、除去する
+            number = add_sub_div_tokens.pop(-1)
+            mul_answer = number['number'] * tokens[index + 1]['number']
+             #tokens[index-1]がelseの方を通りすでに格納されてしまっているので、除去する
             add_sub_div_tokens.append({'type': 'NUMBER', 'number': mul_answer})
-            index += 2            
+            index += 2
+        elif tokens[index]['type'] == 'DIV':
+            number = add_sub_div_tokens.pop(-1)
+            mul_answer = number['number'] / tokens[index + 1]['number']
+             #tokens[index-1]がelseの方を通りすでに格納されてしまっているので、除去する
+            add_sub_div_tokens.append({'type': 'NUMBER', 'number': mul_answer})
+            # print(add_sub_div_tokens)
+            index += 2    
         else:
             add_sub_div_tokens.append(tokens[index])
             index += 1
 
-    index = 0
-    while index < len(add_sub_div_tokens): # 割り算のみを行うループ
-        if add_sub_div_tokens[index]['type'] == 'DIV':
-            div_answer = add_sub_div_tokens[index - 1]['number'] / add_sub_div_tokens[index + 1]['number']
-            add_sub_tokens.pop(-1)
-            add_sub_tokens.append({'type': 'NUMBER', 'number': div_answer})
-            index += 2            
-        else:
-            add_sub_tokens.append(add_sub_div_tokens[index])
-            index += 1
+    # index = 0
+    # while index < len(add_sub_div_tokens): # 割り算のみを行うループ
+    #     if add_sub_div_tokens[index]['type'] == 'DIV':
+    #         div_answer = add_sub_div_tokens[index - 1]['number'] / add_sub_div_tokens[index + 1]['number']
+    #         add_sub_tokens.pop(-1)
+    #         add_sub_tokens.append({'type': 'NUMBER', 'number': div_answer})
+    #         index += 2            
+    #     else:
+    #         add_sub_tokens.append(add_sub_div_tokens[index])
+    #         index += 1
     # print(add_sub_tokens)
-    return add_sub_tokens
+    return add_sub_div_tokens
 
 def calculate_add_sub(answer, operator, number):
     if operator == 'PLUS':
@@ -133,6 +140,32 @@ def gain_group_from_tokens(tokens, index):
         index += 1
     group.pop(-1)
     return group, index
+
+def gain_min_group(tokens, index):
+    group = []
+    end_index = index
+    while index >= 0:
+        if tokens[index]['type'] == 'BEGIN':
+            begin_index = index
+            break
+        index -= 1
+    group = tokens[(begin_index+1):(end_index)]
+    print(group)
+    grouped = evaluate(group)
+
+    return grouped, begin_index, end_index
+
+def calculate_min_group(tokens):
+    index = 0
+    while index < len(tokens):
+        if tokens[index]['type'] == 'END':
+            grouped, begin_index, end_index = gain_min_group(tokens, index)
+            del tokens[begin_index:(end_index+1)]
+            tokens.insert(begin_index, {'type': 'NUMBER', 'number': grouped})
+            index = begin_index + 1
+        else:
+            index += 1
+    return tokens
 
 def calculate_in_groups(tokens):
     index = 0
@@ -174,8 +207,8 @@ def evaluate(tokens):
     answer = 0
     tokens.insert(0, {'type': 'PLUS'}) # Insert a dummy '+' token
     only_number_tokens = calculate_def(tokens)
-    simpler_tokens = calculate_in_groups(only_number_tokens)
-    # print(simpler_tokens)
+    simpler_tokens = calculate_min_group(only_number_tokens)
+    print(simpler_tokens)
     add_sub_tokens = calculate_mul_and_div(simpler_tokens)
     index = 0
     while index < len(add_sub_tokens):
@@ -197,15 +230,19 @@ def test(line):
 # Add more tests to this function :)
 def run_test():
     print("==== Test started! ====")
-    test("1")
-    test("1+2")
-    test("1.0+2.1-3")
-    test("1.0*2.1-3")
-    test("1.0+2.1/3")
-    test("1.0*2.1+2.1/3")
-    test("1.0*2.1/3")
+    # test("1")
+    # test("1+2")
+    # test("1.0+2.1-3")
+    # test("1.0*2.1-3")
+    # test("1.0+2.1/3")
+    # test("1.0*2.1+2.1/3")
+    # test("1.0*2.1/3")
+    # test("2.0*4*4+2")
+    # test("2.0*4/2/3")
     test("(1.0+2.1)*3")
     test("(1.0+2.1)*3+4/2+5*2")
+    test("1.0+2.1*3+(4/2-5*2)")
+    test("(1.0+2.1*3)*(4/2-5*2)")
     test("((1.0+2.1)+3)*2")
     test("abs(-1.0)")
     test("int(3.5)")
