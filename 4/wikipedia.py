@@ -96,7 +96,7 @@ class Wikipedia:
                         found_paths = True
                         for id in path+[x]:
                             print(self.titles[id] + " ", end="")
-                        print
+                        print()
                     else: # goalでなかったら、pathを更新して次の深さを処理するキューに格納
                         next_queue.append((x, path + [x]))
 
@@ -113,9 +113,35 @@ class Wikipedia:
 
         if not found_paths:
             print("Not found the route")
-
         return
-
+    
+    # def find_shortest_path(self, start, goal):
+    #     start_id = [key for key, value in self.titles.items() if value == start][0]
+    #     goal_id = [key for key, value in self.titles.items() if value == goal][0]
+    #     queue = collections.deque([(start_id,[start_id])]) # make queue
+    #     judge = False
+    #     while True:
+    #         pop_node = queue.popleft() # 末尾を１つdeque
+    #         pop_id = int(pop_node[0])
+    #         path = pop_node[1]
+    #         # print(pop_id)
+    #         enqueue = self.links[pop_id]
+    #         for x in enqueue:
+    #             if x != goal_id:
+    #                 queue.append((x, path + [x]))
+    #             else:
+    #                 judge = True
+    #                 path.append(x)
+    #                 for id in path:
+    #                     print(self.titles[id] + " ", end="")
+    #                 print()
+    #                 # break
+    #         if judge:
+    #             break
+    #         if len(queue) == 0:
+    #             print("Not found the route")
+    #             break
+    #     return
 
 
     # Calculate the page ranks and print the most popular pages.
