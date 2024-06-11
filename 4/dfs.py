@@ -94,14 +94,16 @@ def dfs_with_stack_in_the_recursion_order(start, goal):
     previous[start] = None
 
     node = start # ノードの初期値をstartにセット
-
+    # count = 0
     while stack: # stackが空になるまで
         if node == goal: # ノードがgoalの場合終了
             break
         judge = False
 
         children = links[node]
+        
         for child in children:
+            # count += 1
             if visited[child] == False: # 未探索の子ノードがいればそこに移動、探索済フラグを立てる
                 judge = True
                 stack.append(child)
@@ -110,10 +112,12 @@ def dfs_with_stack_in_the_recursion_order(start, goal):
                 node = child
                 break
         if not judge: # (未探索の)子がいなかったらスタックからpopし新たなnodeに設定, whileで戻って再びその子ノードを探索
+            # stack.pop() # ←必要
             node = stack.pop()
 
     if goal in previous:
         print(" -> ".join(find_path(goal, previous)))
+        # print(count)
     else:
         print("Not found")
 

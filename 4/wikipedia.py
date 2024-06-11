@@ -120,6 +120,7 @@ class Wikipedia:
     #     goal_id = [key for key, value in self.titles.items() if value == goal][0]
     #     queue = collections.deque([(start_id,[start_id])]) # make queue
     #     judge = False
+    #     min = 100000000
     #     while True:
     #         pop_node = queue.popleft() # 末尾を１つdeque
     #         pop_id = int(pop_node[0])
@@ -130,8 +131,9 @@ class Wikipedia:
     #             if x != goal_id:
     #                 queue.append((x, path + [x]))
     #             else:
-    #                 judge = True
+    #                 # judge = True
     #                 path.append(x)
+    #                 min = len(path)
     #                 for id in path:
     #                     print(self.titles[id] + " ", end="")
     #                 print()
@@ -149,14 +151,14 @@ class Wikipedia:
         self.ranks = {key: 1.0 for key in self.links}
         # new_ranks = {key: 0 for key in self.links}
         num_pages = len(self.links)
-        k=0
+        # k=0
         while True:
-            print(k)
-            k+=1
+            # print(k)
+            # k+=1
             sum_rank = 0
             new_ranks = {key: 0 for key in self.links}
             for page, links in self.links.items(): # 各ページにおいて
-                print(k, page)
+                # print(k, page)
 
                 if len(links) == 0: # リンク先がなかったら等配分
                     for key, value in new_ranks.items():
