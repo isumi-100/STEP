@@ -2,6 +2,7 @@
 
 import sys
 import math
+import random
 
 from common import write_tour, read_input
 
@@ -9,24 +10,28 @@ from common import write_tour, read_input
 def distance(city1, city2):
     return math.sqrt((city1[0] - city2[0]) ** 2 + (city1[1] - city2[1]) ** 2)
 
-def two_opt(tour, dist):
+def two_opt(tour, dist): # 説明は同階層のdocument.mdを参照
     N = len(tour)
     improved = True
-
-    while improved:
+    n = 0
+    while improved and n <= 100:
+        n += 1
         improved = False
-        for i in range(1, N - 1):
-            for j in range(i + 1, N):
+        for i in range(1, N):
+            for j in range(i + 1, N + 1):
                 if j - i == 1: continue  # 隣接ノード間だけでは経路の改善ができないのでスキップ
                 # 4点に関して辺を組み替えた方が短ければ
-                if dist[tour[i-1]][tour[i]] + dist[tour[j-1]][tour[j]] > dist[tour[i-1]][tour[j-1]] + dist[tour[i]][tour[j]]:
+                if dist[tour[i-1]][tour[i]] + dist[tour[j-1]][tour[j%N]] > dist[tour[i-1]][tour[j-1]] + dist[tour[i]][tour[j%N]]:
                     tour[i:j] = reversed(tour[i:j])
                     improved = True
+                else:# j == Nの時にはif条件を満たした場合入れ替え
+                    if random.random() < math.exp(-0.1*(dist[tour[i-1]][tour[j-1]] + dist[tour[i]][tour[j%N]]-dist[tour[i-1]][tour[i]] + dist[tour[j-1]][tour[j%N]])):
+                        tour[i:j] = reversed(tour[i:j])
+        print(n)
     return tour
 
 def solve(cities):
     N = len(cities)
-
     dist = [[0] * N for i in range(N)]
     for i in range(N):
         for j in range(i, N):
