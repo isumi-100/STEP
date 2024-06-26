@@ -14,7 +14,7 @@ def two_opt(tour, dist): # 説明は同階層のdocument.mdを参照
     N = len(tour)
     improved = True
     n = 0
-    while improved and n <= 100:
+    while improved and n <= 300:
         n += 1
         improved = False
         for i in range(1, N):
